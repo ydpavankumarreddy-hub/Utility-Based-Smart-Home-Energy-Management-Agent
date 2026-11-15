@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility-Based Smart Home Energy Management Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-emerald-500/10 p-2 rounded-lg border border-emerald-500/30 text-emerald-400 font-bold">⚡</div>
+                <div>
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">SmartHome AI Energy Agent</h1>
+                    <p class="text-xs text-slate-400">Utility-Based Optimization & Multi-Appliance Scheduling</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-medium rounded-full border border-emerald-500/30">● Deployed on Vercel</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                    <span>🎛️</span> Utility Weight Calibration
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-slate-400">Cost Minimization (w_cost)</span>
+                            <span id="val-cost" class="font-mono text-emerald-400">0.40</span>
+                        </div>
+                        <input type="range" id="weight-cost" min="0" max="1" step="0.05" value="0.4" class="w-full accent-emerald-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-slate-400">Occupant Comfort (w_comfort)</span>
+                            <span id="val-comfort" class="font-mono text-emerald-400">0.40</span>
+                        </div>
+                        <input type="range" id="weight-comfort" min="0" max="1" step="0.05" value="0.4" class="w-full accent-emerald-500">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-slate-400">Convenience & Deadlines (w_conv)</span>
+                            <span id="val-conv" class="font-mono text-emerald-400">0.20</span>
+                        </div>
+                        <input type="range" id="weight-conv" min="0" max="1" step="0.05" value="0.2" class="w-full accent-emerald-500">
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-slate-800 space-y-3">
+                    <label class="text-sm font-medium text-slate-300 block">Quick Profiles</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setWeights(0.6, 0.2, 0.2)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-slate-200 transition">Eco Saver</button>
+                        <button onclick="setWeights(0.4, 0.4, 0.2)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-slate-200 transition">Balanced</button>
+                        <button onclick="setWeights(0.1, 0.7, 0.2)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-slate-200 transition">Max Comfort</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2">
+                    <span>📊</span> Performance KPIs
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+                        <p class="text-xs text-slate-400">Daily Cost</p>
+                        <p id="kpi-cost" class="text-2xl font-bold text-emerald-400 mt-1">$2.45</p>
+                        <p class="text-[10px] text-emerald-500/80 mt-1">↓ 32% vs unoptimized</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80">
+                        <p class="text-xs text-slate-400">Peak Load</p>
+                        <p id="kpi-peak" class="text-2xl font-bold text-indigo-400 mt-1">5.8 kW</p>
+                        <p class="text-[10px] text-indigo-400/80 mt-1">Safe (&lt; 8.0 kW limit)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-semibold text-slate-200">24-Hour Optimal Appliance Schedule</h2>
+                    <span class="text-xs text-slate-400 font-mono">Simulated Time-of-Use & Solar PV</span>
+                </div>
+                <div class="h-80 relative">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-lg font-semibold text-slate-200 mb-4">🧠 Agent Reasoning & Decision Log</h2>
+                <div id="log-container" class="space-y-3 font-mono text-xs max-h-48 overflow-y-auto pr-2">
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-slate-300">
+                        <span class="text-emerald-400">[06:00]</span> Tariff low ($0.15/kWh). Pre-heating Water Heater.
+                    </div>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-slate-300">
+                        <span class="text-emerald-400">[12:00]</span> Solar peak detected (6.8 kW). Shifting Washing Machine cycle to maximize self-consumption.
+                    </div>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-slate-300">
+                        <span class="text-emerald-400">[19:00]</span> Peak tariff hour ($0.38/kWh). Deferring non-essential loads.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        Utility-Based Smart Home Energy Management Agent • Vercel Deployment
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
